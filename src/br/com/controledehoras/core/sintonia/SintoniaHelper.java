@@ -11,7 +11,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  * @author Cassio Lemos
  *
  */
-public final class SintoniaHelper {
+public final class CSVHelper {
 
 	/**
 	 * Passando um caminho do arquivo csv para leitura, retorna uma lista de {@link RegistroArquivo}
