@@ -9,20 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import br.com.controledehoras.core.beans.RegistroArquivoBean;
+import br.com.controledehoras.core.beans.RegistroArquivo;
 import br.com.controledehoras.core.beans.Tempo;
 /**
  * 
  * @author Cassio Lemos
  *
  */
-public class CalcTempoUtil {
+public final class CalcTempoUtil {
 
-	public Tempo totalizarHoras(List<RegistroArquivoBean> registros) {
+	public Tempo totalizarHoras(List<RegistroArquivo> registros) {
 
 		long somaMinutos = 0;
 
-		for (RegistroArquivoBean reg : registros) {
+		for (RegistroArquivo reg : registros) {
 			somaMinutos += reg.getTempo().getMinutos();
 		}
 
@@ -30,16 +30,16 @@ public class CalcTempoUtil {
 	}
 
 	/**
-	 * A partir de uma lista de {@link RegistroArquivoBean} agrupa e ordena os registros por dia
+	 * A partir de uma lista de {@link RegistroArquivo} agrupa e ordena os registros por dia
 	 * @param registros
 	 * @return
 	 */
-	public Map<String, RegistroArquivoBean> agruparRegistrosPorDia(
-			List<RegistroArquivoBean> registros) {
+	public Map<String, RegistroArquivo> agruparRegistrosPorDia(
+			List<RegistroArquivo> registros) {
 
-		Map<String, RegistroArquivoBean> somaPorDia = new TreeMap<String, RegistroArquivoBean>();
+		Map<String, RegistroArquivo> somaPorDia = new TreeMap<String, RegistroArquivo>();
 
-		for (RegistroArquivoBean reg : registros) {
+		for (RegistroArquivo reg : registros) {
 			Long soma = 0l;
 			String key = getYYYYMMDD(getCalendar(reg.getData()))+"";
 			if (somaPorDia.containsKey(key)) {
@@ -47,7 +47,7 @@ public class CalcTempoUtil {
 			}
 			soma += reg.getTempo().getMinutos();
 			
-			RegistroArquivoBean newReg = new RegistroArquivoBean();
+			RegistroArquivo newReg = new RegistroArquivo();
 			newReg.setData(reg.getData());
 			Tempo tempo = new Tempo();
 			tempo.setMinutos(soma);

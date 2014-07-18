@@ -3,7 +3,7 @@ package br.com.controledehoras.core.sintonia;
 import java.util.ArrayList;
 import java.util.List;
 
-class LeitorDeTexto implements Leitor {
+final class LeitorDeTexto implements Leitor {
 
 	@Override
 	public List<String> getLinhas(String info) {

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class LeitorDeArquivos implements Leitor {
+final class LeitorDeArquivos implements Leitor {
 	
 	
 	public List<String> getLinhas(String caminhoDoArquivo){

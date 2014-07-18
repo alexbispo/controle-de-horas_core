@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.controledehoras.core.beans.Feriado;
-import br.com.controledehoras.core.beans.RegistroArquivoBean;
+import br.com.controledehoras.core.beans.RegistroArquivo;
 import br.com.controledehoras.core.beans.SaldoDia;
 import br.com.controledehoras.core.beans.Tempo;
 import br.com.controledehoras.core.tempo.CalcTempoUtil;
@@ -14,7 +14,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  * @author Cassio Lemos
  *
  */
-public class CalcMedia {
+public final class CalcMedia {
 
 	private CalcTempoUtil calc;
 
@@ -30,6 +30,7 @@ public class CalcMedia {
 	 * @param tempo
 	 * @return
 	 */
+	@Deprecated
 	public Tempo getSaldoDoMes(int mes, int ano, int qtdadeFeriados, Tempo tempo) {
 
 		int diasUteis = getDiasUteis(mes, ano, qtdadeFeriados);
@@ -51,7 +52,7 @@ public class CalcMedia {
 	 * @param registro
 	 * @return
 	 */
-	public SaldoDia getSaldoDoDia(RegistroArquivoBean registro) {
+	public SaldoDia getSaldoDoDia(RegistroArquivo registro) {
 		CalcTempoUtil calc = new CalcTempoUtil();
 		long minutosTrabalhados = registro.getTempo().getMinutos();
 		long minutosNecessarios = calc
@@ -66,13 +67,14 @@ public class CalcMedia {
 
 	/**
 	 * Totaliza o saldo por dia a partir de uma lista
+	 * ate a data atual, exceto HOJE
 	 * @param dataInicial
 	 * @param registros
 	 * @param feriados
 	 * @return
 	 */
 	public Tempo getSaldoTotalCalculadoPorDia(Calendar dataInicial,
-			Map<String, RegistroArquivoBean> registros, List<Feriado> feriados) {
+			Map<String, RegistroArquivo> registros, List<Feriado> feriados) {
 
 		long saldoGeral = 0;
 		CalcTempoUtil calc = new CalcTempoUtil();
@@ -88,7 +90,7 @@ public class CalcMedia {
 			long minutosTrabalhados = 0;
 			double saldoGerado = 0;
 
-			RegistroArquivoBean reg = registros.get(calc
+			RegistroArquivo reg = registros.get(calc
 					.getYYYYMMDD(dataInicial) + "");
 
 			//verifica se o dia esta marcado como bonus (feriado, atestado ou qualquer outro)

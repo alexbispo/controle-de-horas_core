@@ -1,6 +1,5 @@
 package br.com.controledehoras.core.beans;
 
-import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -8,12 +7,7 @@ import java.util.Calendar;
  * @author Cassio Lemos
  *
  */
-public class Feriado implements Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2L;
+public class Feriado {
 
 	private Long id;
 	private Calendar data;
