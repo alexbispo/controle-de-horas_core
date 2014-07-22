@@ -28,3 +28,7 @@ local.properties
 # PDT-specific
 .buildpath
 
+#Arquivos de log
+derby.log
+*.log
+
