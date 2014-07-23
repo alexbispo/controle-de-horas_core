@@ -17,6 +17,19 @@ import br.com.controledehoras.core.beans.Tempo;
  *
  */
 public final class CalcTempoUtil {
+	
+	private static CalcTempoUtil INSTANCE;
+	
+	private CalcTempoUtil(){
+	}
+	
+	public static CalcTempoUtil getInstance(){
+		if(INSTANCE==null){
+			INSTANCE = new CalcTempoUtil();
+		}
+		return INSTANCE;
+	}
+	
 
 	public Tempo totalizarHoras(List<RegistroArquivo> registros) {
 
@@ -83,23 +96,45 @@ public final class CalcTempoUtil {
 	}
 
 	/**
-	 * Cria um Calendar a partir de uma data int
-	 * @param date
-	 *            formato esperado yymmdd
+	 * Cria um Calendar a partir de uma String no formato yyyyMMdd
+	 * @param strDate
 	 * @return
 	 */
-	public Calendar getCalendar(int intDate) {
+	public Calendar getCalendar(String strDate) {
 		Calendar c = null;
 		try {
 			c = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			Date date = sdf.parse(intDate+"");
+			Date date = sdf.parse(strDate);
 			c.setTime(date);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return c;
 	}
+	
+	/**
+	 * Cria um Calendar a partir de uma data int
+	 * @param date
+	 *            formato esperado yyyy mm dd
+	 * @return
+	 */
+	public Calendar getCalendar(int ano, int mes, int dia) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(ano).append(mes).append(dia);
+		return getCalendar(builder.toString());
+	}
+	
+	/**
+	 * Cria um Calendar a partir de uma data int
+	 * @param date
+	 *            formato esperado yyyy mm dd
+	 * @return
+	 */
+	public Calendar getCalendar(int intData) {
+		return getCalendar(intData+"");
+	}
+	
 
 	/**
 	 * Retorna a data no formato YYYYMMDD em int

@@ -12,7 +12,14 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  *
  */
 public final class CSVHelper {
-
+	
+	private CSVHelper(){
+	}
+	
+	public static CSVHelper getInstance(){
+		return new CSVHelper();
+	}
+	
 	/**
 	 * Passando um caminho do arquivo csv para leitura, retorna uma lista de {@link RegistroArquivo}
 	 * com os registros do arquivo
@@ -55,7 +62,7 @@ public final class CSVHelper {
 
 	private RegistroArquivo registroBuilder(String linha) {
 		//trata a linha recebida separando pelo marcador #|#
-		CalcTempoUtil calc = new CalcTempoUtil();
+		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		String[] campos = linha.split("\\s*[#|#]+\\s*");
 		if (campos != null && campos.length > 7) {
 			RegistroArquivo reg = new RegistroArquivo();

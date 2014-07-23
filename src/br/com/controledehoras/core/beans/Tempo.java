@@ -45,7 +45,7 @@ public class Tempo {
 		String ar[] = hhmm.split(":");
 		long horas = Long.parseLong(ar[0]);
 		long minutos = Long.parseLong(ar[1]);
-		this.minutos = (minutos + new CalcTempoUtil()
+		this.minutos = (minutos + CalcTempoUtil.getInstance()
 				.transformarHorasEmMinutos(horas));
 	}
 

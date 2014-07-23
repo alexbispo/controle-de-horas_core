@@ -16,10 +16,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  */
 public final class CalcMedia {
 
-	private CalcTempoUtil calc;
-
-	public CalcMedia(CalcTempoUtil calc) {
-		this.calc = calc;
+	public CalcMedia() {
 	}
 
 	/**
@@ -38,7 +35,7 @@ public final class CalcMedia {
 
 		long minutosRealizados = tempo.getMinutos();
 
-		long minutosDevidos = this.calc
+		long minutosDevidos = CalcTempoUtil.getInstance()
 				.transformarHorasEmMinutos(totalMesDevido);
 
 		long saldo = minutosRealizados - minutosDevidos;
@@ -53,7 +50,7 @@ public final class CalcMedia {
 	 * @return
 	 */
 	public SaldoDia getSaldoDoDia(RegistroArquivo registro) {
-		CalcTempoUtil calc = new CalcTempoUtil();
+		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		long minutosTrabalhados = registro.getTempo().getMinutos();
 		long minutosNecessarios = calc
 				.transformarHorasEmMinutos(Config.MEDIA_HORAS);
@@ -77,7 +74,7 @@ public final class CalcMedia {
 			Map<String, RegistroArquivo> registros, List<Feriado> feriados) {
 
 		long saldoGeral = 0;
-		CalcTempoUtil calc = new CalcTempoUtil();
+		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		final long minutosNecessarios = calc
 				.transformarHorasEmMinutos(Config.MEDIA_HORAS);
 
@@ -154,11 +151,11 @@ public final class CalcMedia {
 
 	private Feriado verificarFeriado(Calendar data, List<Feriado> feriados) {
 
-		int anoMesDiaAtual = this.calc.getYYYYMMDD(data);
+		int anoMesDiaAtual = CalcTempoUtil.getInstance().getYYYYMMDD(data);
 
 		for (Feriado feriado : feriados) {
 
-			int anoMesDiaFeriado = this.calc.getYYYYMMDD(feriado.getData());
+			int anoMesDiaFeriado = CalcTempoUtil.getInstance().getYYYYMMDD(feriado.getData());
 
 			if (anoMesDiaAtual == anoMesDiaFeriado) {
 				return feriado;
@@ -215,10 +212,10 @@ public final class CalcMedia {
 		Calendar hoje = Calendar.getInstance();
 
 		int diasUteis = 0;
-		int intConsumo = this.calc.getYYYYMMDD(consumirAte);
+		int intConsumo = CalcTempoUtil.getInstance().getYYYYMMDD(consumirAte);
 		int intHoje = 0;
 		do {
-			intHoje = this.calc.getYYYYMMDD(hoje);
+			intHoje = CalcTempoUtil.getInstance().getYYYYMMDD(hoje);
 			if (!(hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 					&& !(hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
 				if (verificarFeriado(hoje, feriados) == null) {

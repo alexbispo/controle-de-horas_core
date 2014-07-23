@@ -17,18 +17,20 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
 public class CalculadoraMediaHelper {
 
 	private CalcMedia calcMedia;
-	private CalcTempoUtil calcTempoUtil;
 
-	public CalculadoraMediaHelper() {
-		this.calcTempoUtil = new CalcTempoUtil();
-		this.calcMedia = new CalcMedia(this.calcTempoUtil);
+	private CalculadoraMediaHelper() {
+		this.calcMedia = new CalcMedia();
+	}
+	
+	public static CalculadoraMediaHelper getInstance(){
+		return new CalculadoraMediaHelper();
 	}
 
 	public Tempo calcularMediaDiariaParaEliminarSaldo(
 			List<RegistroArquivo> registros, Quadrimestre quadrimetre,
 			List<Feriado> feriados, int dataConsumirAte) {
 
-		Map<String, RegistroArquivo> diasAgrupados = this.calcTempoUtil
+		Map<String, RegistroArquivo> diasAgrupados = CalcTempoUtil.getInstance()
 				.agruparRegistrosPorDia(registros);
 
 		Calendar inicioQuadrimestre = quadrimetre.getCalendarDataInicial();
@@ -36,7 +38,7 @@ public class CalculadoraMediaHelper {
 		Tempo saldoDias = this.calcMedia.getSaldoTotalCalculadoPorDia(
 				inicioQuadrimestre, diasAgrupados, feriados);
 
-		Calendar consumirAte = this.calcTempoUtil.getCalendar(dataConsumirAte);
+		Calendar consumirAte = CalcTempoUtil.getInstance().getCalendar(dataConsumirAte);
 
 		Tempo divisao = this.calcMedia.getHorasNecessariasParaOPeriodo(
 				consumirAte, saldoDias, feriados);
