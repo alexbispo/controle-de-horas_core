@@ -1,23 +1,21 @@
 package br.com.controledehoras.core.beans;
 
-import java.text.DecimalFormat;
-
 import br.com.controledehoras.core.tempo.CalcTempoUtil;
 
 /**
  * Utilizada para marcar o tempo de qualquer registros
- * <br>Contem metodos auxiliares
- *   @author Cassio Lemos
+ * 
+ * @author Cassio Lemos
  *
  */
-public class Tempo {
+class Tempo implements ITempo {
 
 	private long minutos;
 
-	public Tempo() {
+	private Tempo() {
 	}
-	
-	public Tempo(long minutos) {
+
+	private Tempo(long minutos) {
 		this.minutos = minutos;
 	}
 
@@ -25,8 +23,9 @@ public class Tempo {
 	 * @param hhmm
 	 *            no formato HH:MM
 	 */
-	public Tempo(String hhmm) {
-		setMinutosFromStringHHMM(hhmm);
+	private Tempo(String hhmm) {
+		this.minutos = CalcTempoUtil.getInstance().getMinutosFromStringHHMM(
+				hhmm);
 	}
 
 	public long getMinutos() {
@@ -37,42 +36,16 @@ public class Tempo {
 		this.minutos = minutos;
 	}
 
-	/**
-	 * Altera os minutos recebendo uma String no formato HH:MM ex.: 08:26
-	 * @param hhmm
-	 */
-	public void setMinutosFromStringHHMM(String hhmm) {
-		String ar[] = hhmm.split(":");
-		long horas = Long.parseLong(ar[0]);
-		long minutos = Long.parseLong(ar[1]);
-		this.minutos = (minutos + CalcTempoUtil.getInstance()
-				.transformarHorasEmMinutos(horas));
+	public static ITempo getInstance() {
+		return new Tempo();
 	}
 
-	/**
-	 * Retorna um Array de long sendo [0]= horas [1]= minutos
-	 * @return
-	 */
-	public long[] getHoras() {
-		long horas = (int) this.minutos / 60;
-		long minutos = this.minutos % 60;
-		return new long[] { horas, minutos };
-
+	public static ITempo getInstance(long minutos) {
+		return new Tempo(minutos);
 	}
 
-	/**
-	 * Retorna horas em String no formato HH:MM ex.: 08:26
-	 * @return
-	 */
-	public String getHorasString() {
-		DecimalFormat decFormat = new DecimalFormat("#00");
-		long x[] = getHoras();
-		return x[0] + ":" + decFormat.format(Math.abs(x[1]));
-	}
-	
-	@Override
-	public String toString(){
-		return getHorasString();
+	public static ITempo getInstance(String hhmm) {
+		return new Tempo(hhmm);
 	}
 
 }

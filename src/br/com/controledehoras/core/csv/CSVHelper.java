@@ -3,55 +3,62 @@ package br.com.controledehoras.core.csv;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.controledehoras.core.beans.RegistroArquivo;
-import br.com.controledehoras.core.beans.Tempo;
+import br.com.controledehoras.core.beans.Builder;
+import br.com.controledehoras.core.beans.ITempo;
+import br.com.controledehoras.core.beans.Registrable;
 import br.com.controledehoras.core.tempo.CalcTempoUtil;
+
 /**
  * 
  * @author Cassio Lemos
  *
  */
 public final class CSVHelper {
-	
-	private CSVHelper(){
+
+	private CSVHelper() {
 	}
-	
-	public static CSVHelper getInstance(){
+
+	public static CSVHelper getInstance() {
 		return new CSVHelper();
 	}
-	
+
 	/**
-	 * Passando um caminho do arquivo csv para leitura, retorna uma lista de {@link RegistroArquivo}
-	 * com os registros do arquivo
-	 * @param caminhoDoArquivo diretorio do arquivo
+	 * Passando um caminho do arquivo csv para leitura, retorna uma lista de
+	 * {@link RegistroArquivo} com os registros do arquivo
+	 * 
+	 * @param caminhoDoArquivo
+	 *            diretorio do arquivo
 	 * @return lista de registros
 	 * @throws Exception
 	 */
-	public List<RegistroArquivo> obterRegistrosDoArquivo(
-			String caminhoDoArquivo) throws Exception {
+	public List<Registrable> obterRegistrosDoArquivo(String caminhoDoArquivo)
+			throws Exception {
 		return processarInformacoes(ModoLeituraEnum.ARQUIVO, caminhoDoArquivo);
 	}
 
 	/**
-	 * Passando o conteudo do arquivo csv, retorna uma lista de {@link RegistroArquivo}
-	 * @param texto Conteudo do arquivo csv
+	 * Passando o conteudo do arquivo csv, retorna uma lista de
+	 * {@link RegistroArquivo}
+	 * 
+	 * @param texto
+	 *            Conteudo do arquivo csv
 	 * @return lista de registros
 	 * @throws Exception
 	 */
-	public List<RegistroArquivo> obterRegistrosDoTexto(String texto)
+	public List<Registrable> obterRegistrosDoTexto(String texto)
 			throws Exception {
 		return processarInformacoes(ModoLeituraEnum.TEXTO, texto);
 	}
 
-	private List<RegistroArquivo> processarInformacoes(
-			ModoLeituraEnum modoLeitura, String info) throws Exception {
+	private List<Registrable> processarInformacoes(ModoLeituraEnum modoLeitura,
+			String info) throws Exception {
 		List<String> linhas = modoLeitura.getLinhas(info);
 		if (linhas.isEmpty()) {
 			throw new Exception("Arquivo vazio");
 		}
-		List<RegistroArquivo> registros = new ArrayList<RegistroArquivo>();
+		List<Registrable> registros = new ArrayList<Registrable>();
 		for (String linha : linhas) {
-			RegistroArquivo reg = registroBuilder(linha);
+			Registrable reg = registroBuilder(linha);
 			if (reg != null) {
 				registros.add(reg);
 			}
@@ -60,17 +67,17 @@ public final class CSVHelper {
 
 	}
 
-	private RegistroArquivo registroBuilder(String linha) {
-		//trata a linha recebida separando pelo marcador #|#
+	private Registrable registroBuilder(String linha) {
+		// trata a linha recebida separando pelo marcador #|#
 		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		String[] campos = linha.split("\\s*[#|#]+\\s*");
 		if (campos != null && campos.length > 7) {
-			RegistroArquivo reg = new RegistroArquivo();
+			Registrable reg = Builder.builderRegistrable();
 			reg.setData(calc.getIntDate(campos[0]));
 			reg.setHoraInicial(campos[2]);
 			reg.setHoraFinal(campos[3]);
-			Tempo tempoBean = new Tempo();
-			tempoBean.setMinutosFromStringHHMM(campos[7]);
+			ITempo tempoBean = Builder.builderITempo(CalcTempoUtil
+					.getInstance().getMinutosFromStringHHMM(campos[7]));
 			reg.setTempo(tempoBean);
 			return reg;
 		}

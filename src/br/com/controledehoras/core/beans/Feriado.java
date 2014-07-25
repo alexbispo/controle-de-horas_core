@@ -9,7 +9,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  * @author Cassio Lemos
  *
  */
-public class Feriado {
+final class Feriado implements Discountable {
 
 	private Calendar data;
 	private double taxa = 1d;
@@ -18,20 +18,38 @@ public class Feriado {
 		super();
 	}
 
-	public Feriado(int ano, int mes, int dia, double taxa) {
+	private Feriado(int ano, int mes, int dia, double taxa) {
 		super();
 		setData(ano, mes, dia);
 		this.taxa = taxa;
 	}
-	
-	public Feriado(Calendar data){
+
+	private Feriado(Calendar data) {
 		this.data = data;
 	}
 
-	public Feriado(int ano, int mes, int dia){
+	private Feriado(int ano, int mes, int dia) {
 		setData(ano, mes, dia);
 	}
-			
+	
+	public static Discountable getInstance(){
+		return new Feriado();
+	}
+	
+	public static Discountable getInstance(int ano, int mes, int dia, double taxa){
+		return new Feriado(ano, mes, dia, taxa);
+	}
+	
+	public static Discountable getInstance(Calendar data){
+		return new Feriado(data);
+	}
+	
+	public static Discountable getInstance(int ano, int mes, int dia){
+		return new Feriado(ano, mes, dia);
+	}
+	
+	
+
 	public Calendar getData() {
 		return (Calendar) data.clone();
 	}
@@ -39,7 +57,7 @@ public class Feriado {
 	public void setData(Calendar data) {
 		this.data = data;
 	}
-	
+
 	public void setData(int ano, int mes, int dia) {
 		this.data = CalcTempoUtil.getInstance().getCalendar(ano, mes, dia);
 	}

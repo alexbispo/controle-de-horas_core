@@ -5,7 +5,7 @@ package br.com.controledehoras.core.beans;
  * @author Cassio Lemos
  *
  */
-public class RegistroArquivo {
+class RegistroArquivo implements Registrable {
 
 	// 13/Jun/14#|#AGUARDANDO
 	// APROVAÇÃO#|#07:49#|#11:59#|#6538#|#004-2013#|#SIM#|#04:10#|#CODIFICACAO#|#Construção
@@ -13,12 +13,16 @@ public class RegistroArquivo {
 
 	private Long id;
 	private int data;
-	private Tempo tempo;
+	private ITempo tempo;
 	private String horaInicial;
 	private String horaFinal;
 
-	public RegistroArquivo() {
+	private RegistroArquivo() {
 		super();
+	}
+	
+	public static Registrable getInstance(){
+		return new RegistroArquivo();
 	}
 
 	public int getData() {
@@ -29,11 +33,11 @@ public class RegistroArquivo {
 		this.data = data;
 	}
 
-	public Tempo getTempo() {
+	public ITempo getTempo() {
 		return tempo;
 	}
 
-	public void setTempo(Tempo tempoBean) {
+	public void setTempo(ITempo tempoBean) {
 		this.tempo = tempoBean;
 	}
 
@@ -66,6 +70,5 @@ public class RegistroArquivo {
 		return "RegistroArquivoBean [data=" + data + ", totalHoras=" + tempo
 				+ "]";
 	}
-	
 
 }

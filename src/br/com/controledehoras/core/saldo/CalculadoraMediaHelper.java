@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import br.com.controledehoras.core.beans.Feriado;
-import br.com.controledehoras.core.beans.RegistroArquivo;
-import br.com.controledehoras.core.beans.Tempo;
+import br.com.controledehoras.core.beans.Discountable;
+import br.com.controledehoras.core.beans.ITempo;
+import br.com.controledehoras.core.beans.Registrable;
 import br.com.controledehoras.core.tempo.CalcTempoUtil;
 
 /**
@@ -21,26 +21,27 @@ public class CalculadoraMediaHelper {
 	private CalculadoraMediaHelper() {
 		this.calcMedia = new CalcMedia();
 	}
-	
-	public static CalculadoraMediaHelper getInstance(){
+
+	public static CalculadoraMediaHelper getInstance() {
 		return new CalculadoraMediaHelper();
 	}
 
-	public Tempo calcularMediaDiariaParaEliminarSaldo(
-			List<RegistroArquivo> registros, Quadrimestre quadrimetre,
-			List<Feriado> feriados, int dataConsumirAte) {
+	public ITempo calcularMediaDiariaParaEliminarSaldo(
+			List<Registrable> registros, Quadrimestre quadrimetre,
+			List<Discountable> feriados, int dataConsumirAte, int mediaHorasPorDia) {
 
-		Map<String, RegistroArquivo> diasAgrupados = CalcTempoUtil.getInstance()
+		Map<String, Registrable> diasAgrupados = CalcTempoUtil.getInstance()
 				.agruparRegistrosPorDia(registros);
 
 		Calendar inicioQuadrimestre = quadrimetre.getCalendarDataInicial();
 
-		Tempo saldoDias = this.calcMedia.getSaldoTotalCalculadoPorDia(
-				inicioQuadrimestre, diasAgrupados, feriados);
+		ITempo saldoDias = this.calcMedia.getSaldoTotalCalculadoPorDia(
+				inicioQuadrimestre, diasAgrupados, feriados, mediaHorasPorDia);
 
-		Calendar consumirAte = CalcTempoUtil.getInstance().getCalendar(dataConsumirAte);
+		Calendar consumirAte = CalcTempoUtil.getInstance().getCalendar(
+				dataConsumirAte);
 
-		Tempo divisao = this.calcMedia.getHorasNecessariasParaOPeriodo(
+		ITempo divisao = this.calcMedia.getHorasNecessariasParaOPeriodo(
 				consumirAte, saldoDias, feriados);
 
 		return divisao;
