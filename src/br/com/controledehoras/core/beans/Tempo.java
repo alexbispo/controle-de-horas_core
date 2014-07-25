@@ -8,7 +8,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  * @author Cassio Lemos
  *
  */
-class Tempo implements ITempo {
+final class Tempo implements ITempo {
 
 	private long minutos;
 

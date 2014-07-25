@@ -5,7 +5,7 @@ package br.com.controledehoras.core.beans;
  * @author Cassio Lemos
  *
  */
-class SaldoDia implements ISaldoDia {
+final class SaldoDia implements ISaldoDia {
 
 	private int data;
 	private Long totalDia;

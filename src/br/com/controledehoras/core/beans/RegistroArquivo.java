@@ -5,7 +5,7 @@ package br.com.controledehoras.core.beans;
  * @author Cassio Lemos
  *
  */
-class RegistroArquivo implements Registrable {
+final class RegistroArquivo implements Registrable {
 
 	// 13/Jun/14#|#AGUARDANDO
 	// APROVAÇÃO#|#07:49#|#11:59#|#6538#|#004-2013#|#SIM#|#04:10#|#CODIFICACAO#|#Construção
