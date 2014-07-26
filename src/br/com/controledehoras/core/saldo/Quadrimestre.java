@@ -26,6 +26,6 @@ public enum Quadrimestre {
 	}
 	
 	public Calendar getCalendarDataInicial(){
-		return new CalcTempoUtil().getCalendar(this.dataInicial);
+		return CalcTempoUtil.getInstance().getCalendar(this.dataInicial);
 	}
 }

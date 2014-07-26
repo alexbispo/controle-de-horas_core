@@ -4,11 +4,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import br.com.controledehoras.core.beans.Feriado;
-import br.com.controledehoras.core.beans.RegistroArquivo;
-import br.com.controledehoras.core.beans.SaldoDia;
-import br.com.controledehoras.core.beans.Tempo;
+import br.com.controledehoras.core.beans.Builder;
+import br.com.controledehoras.core.beans.Discountable;
+import br.com.controledehoras.core.beans.ISaldoDia;
+import br.com.controledehoras.core.beans.ITempo;
+import br.com.controledehoras.core.beans.Registrable;
 import br.com.controledehoras.core.tempo.CalcTempoUtil;
+
 /**
  * 
  * @author Cassio Lemos
@@ -16,14 +18,12 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
  */
 public final class CalcMedia {
 
-	private CalcTempoUtil calc;
-
-	public CalcMedia(CalcTempoUtil calc) {
-		this.calc = calc;
+	public CalcMedia() {
 	}
 
 	/**
 	 * Totaliza saldo somando o mes inteiro
+	 * 
 	 * @param mes
 	 * @param ano
 	 * @param qtdadeFeriados
@@ -31,33 +31,35 @@ public final class CalcMedia {
 	 * @return
 	 */
 	@Deprecated
-	public Tempo getSaldoDoMes(int mes, int ano, int qtdadeFeriados, Tempo tempo) {
+	public ITempo getSaldoDoMes(int mes, int ano, int qtdadeFeriados,
+			ITempo tempo, int mediaHorasPorDia) {
 
 		int diasUteis = getDiasUteis(mes, ano, qtdadeFeriados);
-		int totalMesDevido = diasUteis * Config.MEDIA_HORAS;
+		int totalMesDevido = diasUteis * mediaHorasPorDia;
 
 		long minutosRealizados = tempo.getMinutos();
 
-		long minutosDevidos = this.calc
+		long minutosDevidos = CalcTempoUtil.getInstance()
 				.transformarHorasEmMinutos(totalMesDevido);
 
 		long saldo = minutosRealizados - minutosDevidos;
 
-		return new Tempo(saldo);
+		return Builder.builderITempo(saldo);
 
 	}
 
 	/**
 	 * A partir de um registro, retorna o saldo do dia
+	 * 
 	 * @param registro
 	 * @return
 	 */
-	public SaldoDia getSaldoDoDia(RegistroArquivo registro) {
-		CalcTempoUtil calc = new CalcTempoUtil();
+	public ISaldoDia getSaldoDoDia(Registrable registro, int mediaHorasPorDia) {
+		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		long minutosTrabalhados = registro.getTempo().getMinutos();
 		long minutosNecessarios = calc
-				.transformarHorasEmMinutos(Config.MEDIA_HORAS);
-		SaldoDia saldo = new SaldoDia();
+				.transformarHorasEmMinutos(mediaHorasPorDia);
+		ISaldoDia saldo = Builder.builderISaldoDia();
 		saldo.setData(registro.getData());
 		saldo.setTotalDia(minutosTrabalhados);
 		saldo.setSaldoDia(minutosTrabalhados - minutosNecessarios);
@@ -66,45 +68,46 @@ public final class CalcMedia {
 	}
 
 	/**
-	 * Totaliza o saldo por dia a partir de uma lista
-	 * ate a data atual, exceto HOJE
+	 * Totaliza o saldo por dia a partir de uma lista ate a data atual, exceto
+	 * HOJE
+	 * 
 	 * @param dataInicial
 	 * @param registros
 	 * @param feriados
 	 * @return
 	 */
-	public Tempo getSaldoTotalCalculadoPorDia(Calendar dataInicial,
-			Map<String, RegistroArquivo> registros, List<Feriado> feriados) {
+	public ITempo getSaldoTotalCalculadoPorDia(Calendar dataInicial,
+			Map<String, Registrable> registros, List<Discountable> feriados,
+			int mediaHorasPorDia) {
 
 		long saldoGeral = 0;
-		CalcTempoUtil calc = new CalcTempoUtil();
+		CalcTempoUtil calc = CalcTempoUtil.getInstance();
 		final long minutosNecessarios = calc
-				.transformarHorasEmMinutos(Config.MEDIA_HORAS);
+				.transformarHorasEmMinutos(mediaHorasPorDia);
 
 		Calendar hoje = Calendar.getInstance();
 
-		//conta os dias ate hoje (ignorando hoje)
+		// conta os dias ate hoje (ignorando hoje)
 		while (calc.getYYYYMMDD(dataInicial) < calc.getYYYYMMDD(hoje)) {
 
 			boolean bonus = false;
 			long minutosTrabalhados = 0;
 			double saldoGerado = 0;
 
-			RegistroArquivo reg = registros.get(calc
-					.getYYYYMMDD(dataInicial) + "");
+			Registrable reg = registros.get(calc.getYYYYMMDD(dataInicial) + "");
 
-			//verifica se o dia esta marcado como bonus (feriado, atestado ou qualquer outro)
-			Feriado feriado = verificarFeriado(dataInicial, feriados);
+			// verifica se o dia esta marcado como bonus (feriado, atestado ou
+			// qualquer outro)
+			Discountable feriado = verificarFeriado(dataInicial, feriados);
 			if (feriado != null) {
 				bonus = true;
 			}
 
-			//verificar se nao e um fim de semana
+			// verificar se nao e um fim de semana
 			if ((dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 					|| (dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
 				// dia util
 				bonus = true;
-				System.out.println("FDS");
 			}
 
 			if (bonus) {
@@ -118,11 +121,7 @@ public final class CalcMedia {
 
 					minutosTrabalhados += saldoGerado;
 					saldoGeral += (minutosTrabalhados);
-					System.out.println("Feriado ou fds trabalhado");
-				}else{
-					System.out.println("Feriado");
 				}
-				
 			} else {
 				if (reg != null) {
 					minutosTrabalhados = reg.getTempo().getMinutos();
@@ -133,32 +132,21 @@ public final class CalcMedia {
 
 				saldoGeral += saldoGerado;
 			}
-
-			System.out.println(calc.getDateFormatDDMMMYY(dataInicial));
-			System.out.println("Horas trabalhadas: "
-					+ calc.transformarMinutosEmHoras(minutosTrabalhados)
-							.getHorasString());
-			System.out.println("Saldo gerado: "
-					+ calc.transformarMinutosEmHoras((long) saldoGerado)
-							.getHorasString());
-			System.out.println("Saldo acumulado: "
-					+ calc.transformarMinutosEmHoras(saldoGeral)
-							.getHorasString());
-			System.out.println("-------------------------------------------");
-
 			dataInicial.add(Calendar.DAY_OF_YEAR, 1);
 		}
 
-		return new Tempo(saldoGeral);
+		return Builder.builderITempo(saldoGeral);
 	}
 
-	private Feriado verificarFeriado(Calendar data, List<Feriado> feriados) {
+	private Discountable verificarFeriado(Calendar data,
+			List<Discountable> feriados) {
 
-		int anoMesDiaAtual = this.calc.getYYYYMMDD(data);
+		int anoMesDiaAtual = CalcTempoUtil.getInstance().getYYYYMMDD(data);
 
-		for (Feriado feriado : feriados) {
+		for (Discountable feriado : feriados) {
 
-			int anoMesDiaFeriado = this.calc.getYYYYMMDD(feriado.getData());
+			int anoMesDiaFeriado = CalcTempoUtil.getInstance().getYYYYMMDD(
+					feriado.getData());
 
 			if (anoMesDiaAtual == anoMesDiaFeriado) {
 				return feriado;
@@ -185,15 +173,17 @@ public final class CalcMedia {
 	}
 
 	/**
-	 * Retorna a quantidade de horas necessarias para eliminar o saldo ate a data especificada
-	 * (nao verifica se e positivo, caso queira consumir o saldo funciona da mesma forma)
+	 * Retorna a quantidade de horas necessarias para eliminar o saldo ate a
+	 * data especificada (nao verifica se e positivo, caso queira consumir o
+	 * saldo funciona da mesma forma)
+	 * 
 	 * @param consumirAte
 	 * @param saldo
 	 * @param feriados
 	 * @return
 	 */
-	public Tempo getHorasNecessariasParaOPeriodo(Calendar consumirAte,
-			Tempo saldo, List<Feriado> feriados) {
+	public ITempo getHorasNecessariasParaOPeriodo(Calendar consumirAte,
+			ITempo saldo, List<Discountable> feriados) {
 
 		int dias = contarDiasUteisAte(consumirAte, feriados);
 		long divisao = saldo.getMinutos() / (dias < 1 ? 1 : dias);
@@ -207,18 +197,19 @@ public final class CalcMedia {
 			}
 
 		}
-		return new Tempo(divisao);
+		return Builder.builderITempo(divisao);
 
 	}
 
-	private int contarDiasUteisAte(Calendar consumirAte, List<Feriado> feriados) {
+	private int contarDiasUteisAte(Calendar consumirAte,
+			List<Discountable> feriados) {
 		Calendar hoje = Calendar.getInstance();
 
 		int diasUteis = 0;
-		int intConsumo = this.calc.getYYYYMMDD(consumirAte);
+		int intConsumo = CalcTempoUtil.getInstance().getYYYYMMDD(consumirAte);
 		int intHoje = 0;
 		do {
-			intHoje = this.calc.getYYYYMMDD(hoje);
+			intHoje = CalcTempoUtil.getInstance().getYYYYMMDD(hoje);
 			if (!(hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 					&& !(hoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
 				if (verificarFeriado(hoje, feriados) == null) {
