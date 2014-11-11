@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -166,7 +167,7 @@ public final class CalcTempoUtil {
 		Calendar c = null;
 		try {
 			c = Calendar.getInstance();
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yy");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yy", Locale.US);
 			Date date = sdf.parse(strDate);
 			c.setTime(date);
 		} catch (ParseException e) {
@@ -210,5 +211,19 @@ public final class CalcTempoUtil {
 		long x[] = getHoras(minutos);
 		return x[0] + ":" + decFormat.format(Math.abs(x[1]));
 	}
+	
+	/**
+	 * Retorna a diferença em minutos de dois horarios
+	 * @param hhmmInicial
+	 * @param hhmmFinal
+	 * @return
+	 */
+	public long getDiferecaHoras(String hhmmInicial, String hhmmFinal){
+		long horaInicial = getMinutosFromStringHHMM(hhmmInicial);
+		long horarioFinal = getMinutosFromStringHHMM(hhmmFinal);
+		
+		return horarioFinal - horaInicial;
+	}
+	
 
 }

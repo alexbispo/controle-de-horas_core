@@ -143,13 +143,15 @@ public final class CalcMedia {
 
 		int anoMesDiaAtual = CalcTempoUtil.getInstance().getYYYYMMDD(data);
 
-		for (Discountable feriado : feriados) {
+		if (feriados!=null) {
+			for (Discountable feriado : feriados) {
 
-			int anoMesDiaFeriado = CalcTempoUtil.getInstance().getYYYYMMDD(
-					feriado.getData());
+				int anoMesDiaFeriado = CalcTempoUtil.getInstance().getYYYYMMDD(
+						feriado.getData());
 
-			if (anoMesDiaAtual == anoMesDiaFeriado) {
-				return feriado;
+				if (anoMesDiaAtual == anoMesDiaFeriado) {
+					return feriado;
+				}
 			}
 		}
 		return null;

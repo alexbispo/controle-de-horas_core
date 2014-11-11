@@ -77,7 +77,7 @@ public final class CSVHelper {
 			reg.setHoraInicial(campos[2]);
 			reg.setHoraFinal(campos[3]);
 			ITempo tempoBean = Builder.builderITempo(CalcTempoUtil
-					.getInstance().getMinutosFromStringHHMM(campos[7]));
+					.getInstance().getDiferecaHoras(reg.getHoraInicial(), reg.getHoraFinal()));
 			reg.setTempo(tempoBean);
 			return reg;
 		}
