@@ -44,7 +44,7 @@ public final class CalcMedia {
 
 		long saldo = minutosRealizados - minutosDevidos;
 
-		return Builder.builderITempo(saldo);
+		return Builder.buildITempo(saldo);
 
 	}
 
@@ -59,7 +59,7 @@ public final class CalcMedia {
 		long minutosTrabalhados = registro.getTempo().getMinutos();
 		long minutosNecessarios = calc
 				.transformarHorasEmMinutos(mediaHorasPorDia);
-		ISaldoDia saldo = Builder.builderISaldoDia();
+		ISaldoDia saldo = Builder.buildISaldoDia();
 		saldo.setData(registro.getData());
 		saldo.setTotalDia(minutosTrabalhados);
 		saldo.setSaldoDia(minutosTrabalhados - minutosNecessarios);
@@ -135,7 +135,7 @@ public final class CalcMedia {
 			dataInicial.add(Calendar.DAY_OF_YEAR, 1);
 		}
 
-		return Builder.builderITempo(saldoGeral);
+		return Builder.buildITempo(saldoGeral);
 	}
 
 	private Discountable verificarFeriado(Calendar data,
@@ -199,7 +199,7 @@ public final class CalcMedia {
 			}
 
 		}
-		return Builder.builderITempo(divisao);
+		return Builder.buildITempo(divisao);
 
 	}
 

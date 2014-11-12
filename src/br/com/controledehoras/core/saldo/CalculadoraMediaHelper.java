@@ -26,6 +26,16 @@ public class CalculadoraMediaHelper {
 		return new CalculadoraMediaHelper();
 	}
 
+	
+	/**
+	 * Calcula a media diaria para eliminar saldo tanto positivo quanto negativo dentro de um periodo especificado
+	 * @param registros
+	 * @param quadrimetre
+	 * @param feriados
+	 * @param dataConsumirAte
+	 * @param mediaHorasPorDia
+	 * @return
+	 */
 	public ITempo calcularMediaDiariaParaEliminarSaldo(
 			List<Registrable> registros, Quadrimestre quadrimetre,
 			List<Discountable> feriados, int dataConsumirAte,
@@ -36,7 +46,15 @@ public class CalculadoraMediaHelper {
 				mediaHorasPorDia);
 	}
 	
-
+/**
+ * Calcula a media diaria para eliminar saldo positivo ou negativo a partir de um periodo especificado
+ * @param registros Registros de trabalhos
+ * @param dataInicial Data inicial do periodo a ser calculado
+ * @param feriados Lista de dias que não são uteis exceto finais de semana que o calculo é automatico
+ * @param dataConsumirAte Data que pretende eliminar o saldo
+ * @param mediaHorasPorDia Quantidade de horas que você precisa trabalhar
+ * @return {@link ITempo}
+ */
 	public ITempo calcularMediaDiariaParaEliminarSaldo(
 			List<Registrable> registros, int dataInicial,
 			List<Discountable> feriados, int dataConsumirAte,

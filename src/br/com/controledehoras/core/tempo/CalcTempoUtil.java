@@ -15,7 +15,7 @@ import br.com.controledehoras.core.beans.Registrable;
 import br.com.controledehoras.core.beans.ITempo;
 
 /**
- * 
+ * Classe com funções de conversão de tempo
  * @author Cassio Lemos
  *
  */
@@ -41,7 +41,7 @@ public final class CalcTempoUtil {
 			somaMinutos += reg.getTempo().getMinutos();
 		}
 
-		return Builder.builderITempo(somaMinutos);
+		return Builder.buildITempo(somaMinutos);
 	}
 
 	/**
@@ -64,9 +64,9 @@ public final class CalcTempoUtil {
 			}
 			soma += reg.getTempo().getMinutos();
 
-			Registrable newReg = Builder.builderRegistrable();
+			Registrable newReg = Builder.buildRegistrable();
 			newReg.setData(reg.getData());
-			ITempo tempo = Builder.builderITempo(soma);
+			ITempo tempo = Builder.buildITempo(soma);
 			newReg.setTempo(tempo);
 
 			somaPorDia.put(key, newReg);
@@ -76,7 +76,7 @@ public final class CalcTempoUtil {
 	}
 
 	public ITempo transformarMinutosEmHoras(long minutos) {
-		return Builder.builderITempo(minutos);
+		return Builder.buildITempo(minutos);
 	}
 
 	public long transformarHorasEmMinutos(long horas, long minutosAdicionais) {

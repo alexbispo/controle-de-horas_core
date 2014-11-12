@@ -16,17 +16,21 @@ public class Teste {
 		//exemplo
 		CSVHelper csv = CSVHelper.getInstance();
 		
-		List<Registrable> registrosDoArquivo = csv.obterRegistrosDoArquivo("C:\\temp\\AtividadesTrabalhadasPeriodo.csv");
+		csv.adicionarArquivo("C:\\temp\\AtividadesTrabalhadasPeriodo.csv");
+		csv.adicionarArquivo("C:\\temp\\AtividadesTrabalhadasPeriodo2.csv");
+		csv.adicionarTexto("");
+		
+		List<Registrable> registrosDoArquivo = csv.obterRegistrosDosArquivosAdicionados();
 		
 		CalculadoraMediaHelper calculadoraMediaHelper = CalculadoraMediaHelper.getInstance();
 		
-		ITempo tempo = calculadoraMediaHelper.calcularMediaDiariaParaEliminarSaldo(registrosDoArquivo, 20140901, null, 20140930, 8);
+		ITempo tempo = calculadoraMediaHelper.calcularMediaDiariaParaEliminarSaldo(registrosDoArquivo, 20141001, null, 20141223, 8);
 		
 		CalcTempoUtil calcTempo = CalcTempoUtil.getInstance();
 		String horasString = calcTempo.getHorasString(tempo.getMinutos());
 		
 		CalcMedia media = new CalcMedia();
-		ITempo saldoTotalCalculadoPorDia = media.getSaldoTotalCalculadoPorDia(calcTempo.getCalendar(20140901), calcTempo.agruparRegistrosPorDia(registrosDoArquivo), null, 8);
+		ITempo saldoTotalCalculadoPorDia = media.getSaldoTotalCalculadoPorDia(calcTempo.getCalendar(20141001), calcTempo.agruparRegistrosPorDia(registrosDoArquivo), null, 8);
 		
 		System.out.println(calcTempo.getHorasString(saldoTotalCalculadoPorDia.getMinutos()));
 		System.out.println(horasString);
