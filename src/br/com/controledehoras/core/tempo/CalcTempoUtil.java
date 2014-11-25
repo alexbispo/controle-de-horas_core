@@ -183,8 +183,14 @@ public final class CalcTempoUtil {
 	 */
 	public long getMinutosFromStringHHMM(String hhmm) {
 		String ar[] = hhmm.split(":");
-		long horas = Long.parseLong(ar[0]);
-		long minutos = Long.parseLong(ar[1]);
+		long horas = 0;
+		long minutos = 0;
+//		horas = Long.parseLong(ar[0]);
+//		minutos = Long.parseLong(ar[1]);
+		if (hhmm!=null && !"PENDENTE".equals(hhmm) && !"".equals(hhmm)) {
+			horas = Long.parseLong(ar[0]);
+			minutos = Long.parseLong(ar[1]);
+		}
 		return (minutos + CalcTempoUtil.getInstance()
 				.transformarHorasEmMinutos(horas));
 	}
@@ -221,8 +227,16 @@ public final class CalcTempoUtil {
 	public long getDiferecaHoras(String hhmmInicial, String hhmmFinal){
 		long horaInicial = getMinutosFromStringHHMM(hhmmInicial);
 		long horarioFinal = getMinutosFromStringHHMM(hhmmFinal);
-		
+		if(horarioFinal==0){
+			horarioFinal = getHorarioAtual();
+		}
 		return horarioFinal - horaInicial;
+	}
+	
+	private long getHorarioAtual(){
+		SimpleDateFormat sf = new SimpleDateFormat("hh:mm");
+		String hhmm = sf.format(new Date());
+		return getMinutosFromStringHHMM(hhmm);
 	}
 	
 

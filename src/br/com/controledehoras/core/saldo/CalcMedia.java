@@ -14,7 +14,7 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
 /**
  * 
  * @author Cassio Lemos
- *
+ * 
  */
 public final class CalcMedia {
 
@@ -91,8 +91,6 @@ public final class CalcMedia {
 		while (calc.getYYYYMMDD(dataInicial) < calc.getYYYYMMDD(hoje)) {
 
 			boolean bonus = false;
-			long minutosTrabalhados = 0;
-			double saldoGerado = 0;
 
 			Registrable reg = registros.get(calc.getYYYYMMDD(dataInicial) + "");
 
@@ -103,39 +101,77 @@ public final class CalcMedia {
 				bonus = true;
 			}
 
-			// verificar se nao e um fim de semana
-			if ((dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-					|| (dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
-				// dia util
-				bonus = true;
-			}
-
-			if (bonus) {
-				if (reg != null) {
-					if (feriado != null) {
-						saldoGerado = (reg.getTempo().getMinutos() * feriado
-								.getTaxa());
-					} else {
-						saldoGerado = reg.getTempo().getMinutos();
-					}
-
-					minutosTrabalhados += saldoGerado;
-					saldoGeral += (minutosTrabalhados);
-				}
-			} else {
-				if (reg != null) {
-					minutosTrabalhados = reg.getTempo().getMinutos();
-					saldoGerado = (minutosTrabalhados - minutosNecessarios);
-				} else {
-					saldoGerado = minutosNecessarios * -1;
-				}
-
-				saldoGeral += saldoGerado;
-			}
+			saldoGeral += getSaldoPorDia(dataInicial, minutosNecessarios, bonus, reg, feriado);
 			dataInicial.add(Calendar.DAY_OF_YEAR, 1);
 		}
 
 		return Builder.buildITempo(saldoGeral);
+	}
+
+	
+//	public long getSaldoPorDia(final long minutosNecessarios, boolean bonus,
+//			List<Registrable> registrosDoDia, Discountable feriado) {
+//		
+//		Map<String, Registrable> agrupado = CalcTempoUtil.getInstance().agruparRegistrosPorDia(registrosDoDia);
+//		
+//		
+//	}
+	
+	
+	/**
+	 * Retorna o saldo do dia informado
+	 * @param dataInicial2 
+	 * 
+	 * @param minutosNecessarios
+	 *            Minutos necessário do trabalho
+	 * @param bonus
+	 *            Se o tempo trabalho é bonus
+	 * @param registroDoDia
+	 *            {@link Registrable} Registros do dia
+	 * @param feriado
+	 *            {@link Discountable} Feriado encontrado
+	 * @return saldo do dia
+	 */
+	public long getSaldoPorDia(Calendar dataInicial, final long minutosNecessarios, boolean bonus,
+			Registrable registroDoDia, Discountable feriado) {
+		double saldoGerado;
+//		if (registroDoDia != null) {
+//			dataInicial = CalcTempoUtil.getInstance()
+//					.getCalendar(registroDoDia.getData());
+//
+//		} 
+		// verificar se nao e um fim de semana
+		if ((dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				|| (dataInicial.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
+			// dia util
+			bonus = true;
+		}
+
+		double minutosTrabalhados = 0;
+		long saldoGeral = 0;
+		if (bonus) {
+			if (registroDoDia != null) {
+				if (feriado != null) {
+					saldoGerado = (registroDoDia.getTempo().getMinutos() * feriado
+							.getTaxa());
+				} else {
+					saldoGerado = registroDoDia.getTempo().getMinutos();
+				}
+
+				minutosTrabalhados += saldoGerado;
+				saldoGeral += (minutosTrabalhados);
+			}
+		} else {
+			if (registroDoDia != null) {
+				minutosTrabalhados = registroDoDia.getTempo().getMinutos();
+				saldoGerado = (minutosTrabalhados - minutosNecessarios);
+			} else {
+				saldoGerado = minutosNecessarios * -1;
+			}
+
+			saldoGeral += saldoGerado;
+		}
+		return saldoGeral;
 	}
 
 	private Discountable verificarFeriado(Calendar data,
@@ -143,7 +179,7 @@ public final class CalcMedia {
 
 		int anoMesDiaAtual = CalcTempoUtil.getInstance().getYYYYMMDD(data);
 
-		if (feriados!=null) {
+		if (feriados != null) {
 			for (Discountable feriado : feriados) {
 
 				int anoMesDiaFeriado = CalcTempoUtil.getInstance().getYYYYMMDD(
