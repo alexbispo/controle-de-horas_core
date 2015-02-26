@@ -11,15 +11,46 @@ import br.com.controledehoras.core.tempo.CalcTempoUtil;
 /**
  * 
  * @author Cassio Lemos
- *
+ * 
  */
 public final class CSVHelper {
+
+	private List<Informacao> informacoes;
 
 	private CSVHelper() {
 	}
 
 	public static CSVHelper getInstance() {
 		return new CSVHelper();
+	}
+
+	public void adicionarArquivo(String caminhoDoArquivo) {
+		if (this.informacoes == null) {
+			this.informacoes = new ArrayList<Informacao>();
+		}
+		this.informacoes.add(Informacao.buildInformcacaoArquivo(caminhoDoArquivo));
+	}
+	
+	public void adicionarTexto(String texto) {
+		if (this.informacoes == null) {
+			this.informacoes = new ArrayList<Informacao>();
+		}
+		this.informacoes.add(Informacao.buildInformcacaoTexto(texto));
+	}
+
+	/**
+	 * A partir dos arquivos adicionados retorna uma lista de todos os registros dos arquivos
+	 * @return Lista com todos os registro lidos
+	 * @throws Exception
+	 */
+	public List<Registrable> obterRegistrosDosArquivosAdicionados()
+			throws Exception {
+		List<Registrable> todosRegistros = new ArrayList<Registrable>(); 
+		for (Informacao informacao : this.informacoes) {
+			List<Registrable> registrosLidos = processarInformacoes(informacao.getModoLeituraEnum(), informacao.getInfo());
+			todosRegistros.addAll(registrosLidos);
+		}
+		return todosRegistros;
 	}
 
 	/**
@@ -68,18 +99,21 @@ public final class CSVHelper {
 	}
 
 	private Registrable registroBuilder(String linha) {
-		// trata a linha recebida separando pelo marcador #|#
-		CalcTempoUtil calc = CalcTempoUtil.getInstance();
-		String[] campos = linha.split("\\s*[#|#]+\\s*");
-		if (campos != null && campos.length > 7) {
-			Registrable reg = Builder.builderRegistrable();
-			reg.setData(calc.getIntDate(campos[0]));
-			reg.setHoraInicial(campos[2]);
-			reg.setHoraFinal(campos[3]);
-			ITempo tempoBean = Builder.builderITempo(CalcTempoUtil
-					.getInstance().getMinutosFromStringHHMM(campos[7]));
-			reg.setTempo(tempoBean);
-			return reg;
+		if (linha!=null) {
+			// trata a linha recebida separando pelo marcador #|#
+			CalcTempoUtil calc = CalcTempoUtil.getInstance();
+			String[] campos = linha.split("\\s*[#|#]+\\s*");
+			if (campos != null && campos.length > 7) {
+				Registrable reg = Builder.buildRegistrable();
+				reg.setData(calc.getIntDate(campos[0]));
+				reg.setHoraInicial(campos[2]);
+				reg.setHoraFinal(campos[3]);
+				ITempo tempoBean = Builder.buildITempo(CalcTempoUtil
+						.getInstance().getDiferecaHoras(reg.getHoraInicial(),
+								reg.getHoraFinal()));
+				reg.setTempo(tempoBean);
+				return reg;
+			}
 		}
 		return null;
 	}

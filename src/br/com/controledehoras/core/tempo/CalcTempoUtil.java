@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,7 +15,7 @@ import br.com.controledehoras.core.beans.Registrable;
 import br.com.controledehoras.core.beans.ITempo;
 
 /**
- * 
+ * Classe com funções de conversão de tempo
  * @author Cassio Lemos
  *
  */
@@ -40,7 +41,7 @@ public final class CalcTempoUtil {
 			somaMinutos += reg.getTempo().getMinutos();
 		}
 
-		return Builder.builderITempo(somaMinutos);
+		return Builder.buildITempo(somaMinutos);
 	}
 
 	/**
@@ -63,9 +64,9 @@ public final class CalcTempoUtil {
 			}
 			soma += reg.getTempo().getMinutos();
 
-			Registrable newReg = Builder.builderRegistrable();
+			Registrable newReg = Builder.buildRegistrable();
 			newReg.setData(reg.getData());
-			ITempo tempo = Builder.builderITempo(soma);
+			ITempo tempo = Builder.buildITempo(soma);
 			newReg.setTempo(tempo);
 
 			somaPorDia.put(key, newReg);
@@ -75,7 +76,7 @@ public final class CalcTempoUtil {
 	}
 
 	public ITempo transformarMinutosEmHoras(long minutos) {
-		return Builder.builderITempo(minutos);
+		return Builder.buildITempo(minutos);
 	}
 
 	public long transformarHorasEmMinutos(long horas, long minutosAdicionais) {
@@ -166,7 +167,7 @@ public final class CalcTempoUtil {
 		Calendar c = null;
 		try {
 			c = Calendar.getInstance();
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yy");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yy", Locale.US);
 			Date date = sdf.parse(strDate);
 			c.setTime(date);
 		} catch (ParseException e) {
@@ -182,8 +183,14 @@ public final class CalcTempoUtil {
 	 */
 	public long getMinutosFromStringHHMM(String hhmm) {
 		String ar[] = hhmm.split(":");
-		long horas = Long.parseLong(ar[0]);
-		long minutos = Long.parseLong(ar[1]);
+		long horas = 0;
+		long minutos = 0;
+//		horas = Long.parseLong(ar[0]);
+//		minutos = Long.parseLong(ar[1]);
+		if (hhmm!=null && !"PENDENTE".equals(hhmm) && !"".equals(hhmm)) {
+			horas = Long.parseLong(ar[0]);
+			minutos = Long.parseLong(ar[1]);
+		}
 		return (minutos + CalcTempoUtil.getInstance()
 				.transformarHorasEmMinutos(horas));
 	}
@@ -210,5 +217,27 @@ public final class CalcTempoUtil {
 		long x[] = getHoras(minutos);
 		return x[0] + ":" + decFormat.format(Math.abs(x[1]));
 	}
+	
+	/**
+	 * Retorna a diferença em minutos de dois horarios
+	 * @param hhmmInicial
+	 * @param hhmmFinal
+	 * @return
+	 */
+	public long getDiferecaHoras(String hhmmInicial, String hhmmFinal){
+		long horaInicial = getMinutosFromStringHHMM(hhmmInicial);
+		long horarioFinal = getMinutosFromStringHHMM(hhmmFinal);
+		if(horarioFinal==0){
+			horarioFinal = getHorarioAtual();
+		}
+		return horarioFinal - horaInicial;
+	}
+	
+	private long getHorarioAtual(){
+		SimpleDateFormat sf = new SimpleDateFormat("hh:mm");
+		String hhmm = sf.format(new Date());
+		return getMinutosFromStringHHMM(hhmm);
+	}
+	
 
 }
